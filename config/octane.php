@@ -8,8 +8,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | This value determines the default Octane server that will be used by
-    | the application. Laravel Octane ships with "swoole", "roadrunner",
-    | and "frankenphp" servers.
+    | the application. Laravel Octane ships with "swoole" and "frankenphp" 
+    | servers. RoadRunner has been removed from this project.
     |
     */
 
@@ -239,8 +239,8 @@ return [
             'log_file' => storage_path('logs/swoole_http.log'),
             'log_level' => 0,
             'reactor_num' => 2,
-            'worker_num' => auto,
-            'task_worker_num' => auto,
+            'worker_num' => 'auto',
+            'task_worker_num' => 'auto',
             'enable_coroutine' => true,
             'max_coroutine' => 100000,
             'open_http2_protocol' => true,

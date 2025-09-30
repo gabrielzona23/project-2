@@ -56,9 +56,9 @@ RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions sto
     && mkdir -p /run/nginx \
     && mkdir -p /var/log/supervisor
 
-# Install Composer dependencies (will be overridden by volume mount)
-COPY composer.json composer.lock* ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts || true
+# Copy optimized composer files and install dependencies
+COPY composer.json ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Expose port
 EXPOSE 80

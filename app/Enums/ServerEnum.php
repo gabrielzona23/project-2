@@ -21,12 +21,12 @@ enum ServerEnum
 
     public function getBenchmarkCommand(EndpointEnum $endpointEnum): string
     {
-        return 'wrk -t16 -c100 -d'.$endpointEnum->getBenchmarkDuration().'s -s json.lua --latency  http://127.0.0.1:'.$this->getPort().$endpointEnum->getRoute();
+        return 'wrk -t16 -c100 -d' . $endpointEnum->getBenchmarkDuration() . 's -s json.lua --latency  http://127.0.0.1:' . $this->getPort() . $endpointEnum->getRoute();
     }
 
     public function getStatsCommand(): string
     {
-        return 'docker stats '.strtolower($this->name).' --format=json --no-stream';
+        return 'docker stats ' . strtolower($this->name) . ' --format=json --no-stream';
     }
 
     public function getTitle(): string
