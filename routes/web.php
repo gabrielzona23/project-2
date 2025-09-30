@@ -104,22 +104,22 @@ Route::prefix('api')->group(function () {
     });
     
     // Cache test endpoint
-    Route::get('/cache/{key?}', function ($key = 'test') {
-        $cacheKey = 'benchmark_' . $key;
-        $data = Cache::remember($cacheKey, 300, function () use ($key) {
-            // Simulate expensive operation
-            usleep(100000); // 100ms delay
-            return [
-                'key' => $key,
-                'generated_at' => now()->toISOString(),
-                'random_data' => array_map(function() {
-                    return random_int(1, 1000);
-                }, range(1, 100))
-            ];
-        });
-        
-        return response()->json($data);
-    });
+// //     Route::get('/cache/{key?}', function ($key = 'test') {
+// //         $cacheKey = 'benchmark_' . $key;
+// //         $data = Cache::remember($cacheKey, 300, function () use ($key) {
+// //             // Simulate expensive operation
+// //             usleep(100000); // 100ms delay
+// //             return [
+// //                 'key' => $key,
+// //                 'generated_at' => now()->toISOString(),
+// //                 'random_data' => array_map(function() {
+// //                     return random_int(1, 1000);
+// //                 }, range(1, 100))
+// //             ];
+// //         });
+//         
+//         return response()->json($data);
+//     });
     
     // Memory intensive endpoint
     Route::get('/memory/{size?}', function ($size = 1000) {
