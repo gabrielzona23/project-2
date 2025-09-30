@@ -15,7 +15,7 @@ RUN install-php-extensions \
     sockets
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN apk add \
     curl \
     git \
     unzip \

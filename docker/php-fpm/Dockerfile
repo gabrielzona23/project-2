@@ -1,7 +1,7 @@
 FROM php:8.3-fpm-alpine3.19
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN apk add \
     nginx \
     supervisor \
     curl \
@@ -33,7 +33,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         bcmath
 
 # Install Redis extension
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+RUN apk add --virtual .build-deps $PHPIZE_DEPS \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del .build-deps

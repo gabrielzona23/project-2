@@ -1,7 +1,7 @@
 FROM php:8.3-cli-alpine3.19
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN apk add \
     curl \
     libpng-dev \
     libxml2-dev \
@@ -34,13 +34,13 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         sockets
 
 # Install Swoole extension
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+RUN apk add --virtual .build-deps $PHPIZE_DEPS \
     && pecl install swoole \
     && docker-php-ext-enable swoole \
     && apk del .build-deps
 
 # Install Redis extension
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+RUN apk add --virtual .build-deps $PHPIZE_DEPS \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del .build-deps

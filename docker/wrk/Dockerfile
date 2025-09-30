@@ -1,7 +1,7 @@
 FROM alpine:3.19
 
 # Install required tools
-RUN apk add --no-cache \
+RUN apk  \
     curl \
     wget \
     apache2-utils \
@@ -11,7 +11,7 @@ RUN apk add --no-cache \
     bash
 
 # Install wrk (HTTP benchmarking tool)
-RUN apk add --no-cache --virtual .build-deps \
+RUN apk add --virtual .build-deps \
     build-base \
     git \
     perl \
@@ -24,7 +24,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && apk del .build-deps
 
 # Install k6
-RUN apk add --no-cache --virtual .build-deps \
+RUN apk add --virtual .build-deps \
     gnupg \
     && wget -q -O- https://github.com/grafana/k6/releases/download/v0.47.0/k6-v0.47.0-linux-amd64.tar.gz | tar -xz \
     && mv k6-v0.47.0-linux-amd64/k6 /usr/local/bin/ \
