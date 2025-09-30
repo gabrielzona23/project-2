@@ -52,22 +52,17 @@ setup: build up setup-laravel
 
 # Setup Laravel for all runtimes
 setup-laravel:
-	@echo "Setting up Laravel for all runtimes..."
+	@echo "Setting up Laravel..."
+	@echo "Fixing git ownership..."
+	docker-compose exec swoole git config --global --add safe.directory /var/www/html || true
 	@echo "Installing dependencies..."
 	docker-compose exec swoole composer install --no-dev --optimize-autoloader --ignore-platform-reqs
-	@echo "Generating application keys..."
+	@echo "Generating application key..."
 	docker-compose exec swoole php artisan key:generate --force
-	@echo "Running migrations..."
-	docker-compose exec swoole php artisan migrate --force
-	@echo "Seeding database..."
-	docker-compose exec swoole php artisan db:seed --force
-	@echo "Fixing permissions and cache..."
+	@echo "Fixing permissions..."
 	@make fix-permissions
+	@echo "Clearing caches..."
 	@make clear-cache
-	@echo "Caching configuration..."
-	docker-compose exec swoole php artisan config:cache
-	docker-compose exec swoole php artisan route:cache
-	docker-compose exec swoole php artisan view:cache
 	@echo "Laravel setup complete!"
 
 # Fix permissions for all containers
@@ -92,19 +87,19 @@ clear-cache:
 test-health:
 	@echo "Testing health endpoints..."
 	@echo "Swoole (port 8001):"
-	@curl -s http://localhost:8001/health || echo "Failed"
+	@curl -s http://localhost:8001/api/health || echo "Failed"
 	@echo ""
 	@echo "PHP-FPM (port 8002):"
-	@curl -s http://localhost:8002/health || echo "Failed"
+	@curl -s http://localhost:8002/api/health || echo "Failed"
 	@echo ""
 	@echo "FrankenPHP (port 8003):"
-	@curl -s http://localhost:8003/health || echo "Failed"
+	@curl -s http://localhost:8003/api/health || echo "Failed"
 	@echo ""
 
 # Run individual benchmarks
 benchmark:
-	@echo "Running individual benchmarks with k6..."
-	docker run --rm -i --network host grafana/k6 run - < benchmark/k6-test.js
+	@echo "Running endpoint detailed benchmark with k6..."
+	docker run --rm -i --network host grafana/k6 run - < benchmark/k6-endpoint-detailed.js
 
 # Run complete benchmark suite
 benchmark-all:
@@ -120,14 +115,24 @@ results:
 # Quick test all endpoints
 test-endpoints:
 	@echo "Testing all endpoints..."
-	@for runtime in swoole:8000 php-fpm frankenphp:8000; do \
-		echo "Testing $$runtime:"; \
-		for endpoint in health database cache file-read file-write api-external; do \
-			echo -n "  /api/$$endpoint: "; \
-			curl -s -o /dev/null -w "%{http_code}" http://$$runtime/api/$$endpoint && echo " OK" || echo " FAILED"; \
-		done; \
-		echo ""; \
+	@echo "Swoole (port 8001):"
+	@for endpoint in health health-check database cache file-read file-write api-external; do \
+		echo -n "  /api/$$endpoint: "; \
+		curl -s -o /dev/null -w "%{http_code}" http://localhost:8001/api/$$endpoint && echo " OK" || echo " FAILED"; \
 	done
+	@echo ""
+	@echo "PHP-FPM (port 8002):"
+	@for endpoint in health health-check database cache file-read file-write api-external; do \
+		echo -n "  /api/$$endpoint: "; \
+		curl -s -o /dev/null -w "%{http_code}" http://localhost:8002/api/$$endpoint && echo " OK" || echo " FAILED"; \
+	done
+	@echo ""
+	@echo "FrankenPHP (port 8003):"
+	@for endpoint in health health-check database cache file-read file-write api-external; do \
+		echo -n "  /api/$$endpoint: "; \
+		curl -s -o /dev/null -w "%{http_code}" http://localhost:8003/api/$$endpoint && echo " OK" || echo " FAILED"; \
+	done
+	@echo ""
 
 # Development helpers
 dev-swoole:
