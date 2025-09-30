@@ -4,7 +4,6 @@ namespace App\Enums;
 
 enum ServerEnum
 {
-    case OpenSwoole;
     case Swoole;
     case FrankenPHP;
     case PhpFpm;
@@ -12,21 +11,24 @@ enum ServerEnum
     public function getPort(): int
     {
         return match ($this) {
-            self::OpenSwoole => 9801,
-            self::Swoole => 9802,
-            self::FrankenPHP => 9804,
-            self::PhpFpm => 9805,
+            self::Swoole => 8001,
+            self::FrankenPHP => 8003,
+            self::PhpFpm => 8002,
         };
     }
 
     public function getBenchmarkCommand(EndpointEnum $endpointEnum): string
     {
-        return 'wrk -t16 -c100 -d' . $endpointEnum->getBenchmarkDuration() . 's -s json.lua --latency  http://127.0.0.1:' . $this->getPort() . $endpointEnum->getRoute();
+        return 'wrk -t16 -c100 -d' . $endpointEnum->getBenchmarkDuration() . 's --latency http://127.0.0.1:' . $this->getPort() . $endpointEnum->getRoute();
     }
 
     public function getStatsCommand(): string
     {
-        return 'docker stats ' . strtolower($this->name) . ' --format=json --no-stream';
+        return match ($this) {
+            self::Swoole => 'docker stats swoole_benchmark --format=json --no-stream',
+            self::FrankenPHP => 'docker stats frankenphp_benchmark --format=json --no-stream',
+            self::PhpFpm => 'docker stats php_fpm_benchmark --format=json --no-stream',
+        };
     }
 
     public function getTitle(): string

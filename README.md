@@ -13,7 +13,7 @@ This benchmark runs on the following stack:
 
 * **PHP:** 8.4
 * **Laravel Framework:** 12
-* **Application Servers:** OpenSwoole, Swool, FrankenPHP
+* **Application Servers:** Swoole, FrankenPHP
 * **Traditional Server:** Nginx + PHP-FPM
 
 ---
@@ -57,14 +57,6 @@ Use the provided script to run all tests in sequence and save the results to a `
 ### 2. Manual Benchmark
 
 If you prefer to test each service individually, use the `wrk` commands below.
-
-#### OpenSwoole
-
-```bash
-wrk -t16 -c100 -d30s --latency  http://127.0.0.1:9801/api/health-check
-wrk -t16 -c100 -d30s --latency  http://127.0.0.1:9801/api/static
-wrk -t16 -c100 -d30s --latency  http://127.0.0.1:9801/api/http-request
-```
 
 #### Swoole
 
