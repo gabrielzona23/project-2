@@ -13,7 +13,7 @@ This benchmark runs on the following stack:
 
 * **PHP:** 8.4
 * **Laravel Framework:** 12
-* **Application Servers:** OpenSwoole, Swoole, RoadRunner, FrankenPHP
+* **Application Servers:** OpenSwoole, Swool, FrankenPHP
 * **Traditional Server:** Nginx + PHP-FPM
 
 ---

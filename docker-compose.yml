@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine3.19
+    image: postgres:17-alpine3.19
     container_name: postgres_benchmark
     environment:
       POSTGRES_DB: laravel_benchmark

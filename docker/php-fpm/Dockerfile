@@ -46,8 +46,8 @@ WORKDIR /var/www/html
 
 # Copy configurations
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY php.ini /etc/php82/php.ini
-COPY php-fpm.conf /etc/php82/php-fpm.d/www.conf
+COPY php.ini /usr/local/etc/php/php.ini
+COPY php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Create Laravel storage directories
