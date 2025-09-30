@@ -37,7 +37,7 @@ Route::get('/health', function () {
         DB::connection()->getPdo();
         Cache::put('health_check', time(), 60);
         $cached_value = Cache::get('health_check');
-        
+
         return response()->json([
             'status' => 'OK',
             'database' => 'Connected',
@@ -57,7 +57,9 @@ Route::get('/health-check', fn(Request $request) => Response::noContent())->name
 // Simple test endpoints
 Route::get('/static', fn(Request $request) => Response::json(['status' => true]))->name('static');
 
-Route::get('/http-request', fn(Request $request, HttpService $httpService) => 
+Route::get(
+    '/http-request',
+    fn(Request $request, HttpService $httpService) =>
     Response::json(json_decode($httpService->get('http://whoami/api')))
 )->name('http-request');
 
