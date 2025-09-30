@@ -6,7 +6,6 @@ enum ServerEnum
 {
     case OpenSwoole;
     case Swoole;
-    case RoadRunner;
     case FrankenPHP;
     case PhpFpm;
 
@@ -15,7 +14,6 @@ enum ServerEnum
         return match ($this) {
             self::OpenSwoole => 9801,
             self::Swoole => 9802,
-            self::RoadRunner => 9803,
             self::FrankenPHP => 9804,
             self::PhpFpm => 9805,
         };

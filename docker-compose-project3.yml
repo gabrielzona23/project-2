@@ -21,15 +21,6 @@ services:
     ports:
       - "9802:9802"
 
-  roadrunner:
-    container_name: "roadrunner"
-    image: "local/roadrunner"
-    build:
-      context: .
-      dockerfile: roadrunner.Dockerfile
-    ports:
-      - "9803:9803"
-
   frankenphp:
     container_name: "frankenphp"
     image: "local/frankenphp"
