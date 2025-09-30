@@ -1,4 +1,4 @@
-.PHONY: help build up down logs clean setup-laravel benchmark benchmark-all test-health
+.PHONY: help build up down logs clean setup-laravel setup-database fix-permissions clear-cache benchmark benchmark-all test-health test-endpoints
 
 # Default target
 help:
@@ -11,7 +11,10 @@ help:
 	@echo "  logs           - Show logs for all services"
 	@echo "  clean          - Stop services and remove volumes"
 	@echo "  setup-laravel  - Initialize Laravel in all runtimes"
+	@echo "  setup-database - Initialize and seed database"
+	@echo "  fix-permissions- Fix storage permissions for all containers"
 	@echo "  test-health    - Test health endpoints for all runtimes"
+	@echo "  test-endpoints - Test all API endpoints"
 	@echo "  benchmark      - Run individual benchmarks"
 	@echo "  benchmark-all  - Run complete benchmark suite"
 	@echo "  results        - Show latest benchmark results"
@@ -59,6 +62,12 @@ setup-laravel:
 	docker-compose exec swoole composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 	@echo "Generating application key..."
 	docker-compose exec swoole php artisan key:generate --force
+	@echo "Verifying database initialization..."
+	docker-compose exec postgres psql -U laravel -d laravel_benchmark -c "SELECT 'Database initialized successfully';" || true
+	@echo "Running database migrations..."
+	docker-compose exec swoole php artisan migrate --force || true
+	@echo "Seeding database..."
+	docker-compose exec swoole php artisan db:seed --force || true
 	@echo "Fixing permissions..."
 	@make fix-permissions
 	@echo "Clearing caches..."
@@ -70,10 +79,13 @@ fix-permissions:
 	@echo "🔧 Fixing storage permissions..."
 	docker-compose exec swoole chmod -R 777 /var/www/html/storage
 	docker-compose exec swoole mkdir -p /var/www/html/storage/framework/cache/data
+	docker-compose exec swoole chown -R www-data:www-data /var/www/html/storage
 	docker-compose exec php-fpm chmod -R 777 /var/www/html/storage
 	docker-compose exec php-fpm mkdir -p /var/www/html/storage/framework/cache/data
+	docker-compose exec php-fpm chown -R www-data:www-data /var/www/html/storage
 	docker-compose exec frankenphp chmod -R 777 /app/storage
 	docker-compose exec frankenphp mkdir -p /app/storage/framework/cache/data
+	docker-compose exec frankenphp chown -R www-data:www-data /app/storage
 
 # Clear all Laravel caches
 clear-cache:
@@ -82,6 +94,17 @@ clear-cache:
 	docker-compose exec swoole php artisan config:clear || true
 	docker-compose exec swoole php artisan view:clear || true
 	docker-compose exec swoole php artisan cache:clear || true
+
+# Database setup and initialization
+setup-database:
+	@echo "🗄️  Setting up database..."
+	@echo "Verifying database connection..."
+	docker-compose exec postgres psql -U laravel -d laravel_benchmark -c "SELECT version();" || true
+	@echo "Running migrations..."
+	docker-compose exec swoole php artisan migrate:fresh --force || true
+	@echo "Seeding database..."
+	docker-compose exec swoole php artisan db:seed --force || true
+	@echo "Database setup complete!"
 
 # Test health endpoints
 test-health:
