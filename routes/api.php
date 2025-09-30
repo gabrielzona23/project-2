@@ -5,6 +5,8 @@ use App\Services\HttpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,21 +19,47 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get(
-    '/health-check',
-    fn(Request $request) => Response::noContent()
-)->name('health-check');
-Route::get(
-    '/static',
-    fn(Request $request) => Response::json(['status' => true])
-)->name('static');
-Route::get(
-    '/http-request',
-    fn(Request $request, HttpService $httpService) => Response::json(json_decode($httpService->get('http://whoami/api')))
-)->name('http-request');
+// Root API endpoint
+Route::get('/', function () {
+    return response()->json([
+        'message' => 'Laravel Benchmark API',
+        'timestamp' => now()->toISOString(),
+        'server' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+        'php_version' => PHP_VERSION,
+        'memory_usage' => memory_get_usage(true),
+        'peak_memory' => memory_get_peak_usage(true)
+    ]);
+});
 
-// Health check endpoint
-Route::get('/health', [BenchmarkController::class, 'health']);
+// Health check endpoints
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo();
+        Cache::put('health_check', time(), 60);
+        $cached_value = Cache::get('health_check');
+        
+        return response()->json([
+            'status' => 'OK',
+            'database' => 'Connected',
+            'cache' => $cached_value ? 'Connected' : 'Failed',
+            'timestamp' => now()->toISOString()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'ERROR',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
+Route::get('/health-check', fn(Request $request) => Response::noContent())->name('health-check');
+
+// Simple test endpoints
+Route::get('/static', fn(Request $request) => Response::json(['status' => true]))->name('static');
+
+Route::get('/http-request', fn(Request $request, HttpService $httpService) => 
+    Response::json(json_decode($httpService->get('http://whoami/api')))
+)->name('http-request');
 
 // Database operations
 Route::get('/database', [BenchmarkController::class, 'database']);

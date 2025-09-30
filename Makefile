@@ -61,11 +61,32 @@ setup-laravel:
 	docker-compose exec swoole php artisan migrate --force
 	@echo "Seeding database..."
 	docker-compose exec swoole php artisan db:seed --force
+	@echo "Fixing permissions and cache..."
+	@make fix-permissions
+	@make clear-cache
 	@echo "Caching configuration..."
 	docker-compose exec swoole php artisan config:cache
 	docker-compose exec swoole php artisan route:cache
 	docker-compose exec swoole php artisan view:cache
 	@echo "Laravel setup complete!"
+
+# Fix permissions for all containers
+fix-permissions:
+	@echo "🔧 Fixing storage permissions..."
+	docker-compose exec swoole chmod -R 777 /var/www/html/storage
+	docker-compose exec swoole mkdir -p /var/www/html/storage/framework/cache/data
+	docker-compose exec php-fpm chmod -R 777 /var/www/html/storage
+	docker-compose exec php-fpm mkdir -p /var/www/html/storage/framework/cache/data
+	docker-compose exec frankenphp chmod -R 777 /app/storage
+	docker-compose exec frankenphp mkdir -p /app/storage/framework/cache/data
+
+# Clear all Laravel caches
+clear-cache:
+	@echo "🧹 Clearing Laravel caches..."
+	docker-compose exec swoole php artisan route:clear || true
+	docker-compose exec swoole php artisan config:clear || true
+	docker-compose exec swoole php artisan view:clear || true
+	docker-compose exec swoole php artisan cache:clear || true
 
 # Test health endpoints
 test-health:
@@ -140,11 +161,11 @@ health-check: ## Check health of all services
 	@echo "Redis 7:"
 	@docker-compose exec redis redis-cli ping || echo "❌ Redis not ready"
 	@echo "PHP-FPM (8002):"
-	@curl -s http://localhost:8002/health || echo "❌ PHP-FPM not ready"
+	@curl -s http://localhost:8002/api/health || echo "❌ PHP-FPM not ready"
 	@echo "Swoole (8001):"
-	@curl -s http://localhost:8001/health || echo "❌ Swoole not ready"
+	@curl -s http://localhost:8001/api/health || echo "❌ Swoole not ready"
 	@echo "FrankenPHP (8003):"
-	@curl -s http://localhost:8003/health || echo "❌ FrankenPHP not ready"
+	@curl -s http://localhost:8003/api/health || echo "❌ FrankenPHP not ready"
 
 install: ## Install and setup complete project
 	@echo "Setting up project-2..."

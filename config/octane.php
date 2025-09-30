@@ -246,8 +246,8 @@ return [
             'open_http2_protocol' => true,
             'open_http_protocol' => true,
             'document_root' => public_path(),
-            'enable_static_handler' => true,
-            'static_handler_locations' => ['/'],
+            'enable_static_handler' => false, // Desabilitado para não interferir com rotas API
+            'static_handler_locations' => [],
             'open_tcp_nodelay' => true,
             'package_max_length' => 10 * 1024 * 1024,
             'buffer_output_size' => 10 * 1024 * 1024,
