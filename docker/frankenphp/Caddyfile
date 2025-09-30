@@ -1,0 +1,10 @@
+{
+    "admin": "off"
+}
+
+:8000 {
+    root * /app/public
+    encode gzip
+    php_fastcgi unix//var/run/php/php-fpm.sock
+    file_server
+}

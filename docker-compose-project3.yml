@@ -1,0 +1,61 @@
+services:
+  whoami:
+    container_name: "whoami"
+    image: "traefik/whoami"
+
+  openswoole:
+    container_name: "openswoole"
+    image: "local/openswoole"
+    build:
+      context: .
+      dockerfile: openswoole.Dockerfile
+    ports:
+      - "9801:9801"
+
+  swoole:
+    container_name: "swoole"
+    image: "local/swoole"
+    build:
+      context: .
+      dockerfile: swoole.Dockerfile
+    ports:
+      - "9802:9802"
+
+  roadrunner:
+    container_name: "roadrunner"
+    image: "local/roadrunner"
+    build:
+      context: .
+      dockerfile: roadrunner.Dockerfile
+    ports:
+      - "9803:9803"
+
+  frankenphp:
+    container_name: "frankenphp"
+    image: "local/frankenphp"
+    build:
+      context: .
+      dockerfile: frankenphp.Dockerfile
+    ports:
+      - "9804:9804"
+
+  phpfpm:
+    container_name: "phpfpm"
+    image: "local/phpfpm"
+    build:
+      context: .
+      dockerfile: phpfpm.Dockerfile
+    volumes:
+      - .:/var/www
+
+  nginx:
+    image: nginx:alpine
+    container_name: "nginx"
+    ports:
+      - "9805:80"
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - phpfpm
+

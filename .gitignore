@@ -1,0 +1,31 @@
+# Laravel project-2 benchmark
+*.log
+.DS_Store
+Thumbs.db
+
+# Results
+results/*.txt
+results/*.json
+!results/.gitkeep
+
+# Benchmark outputs
+benchmark/*.log
+benchmark/temp/
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
