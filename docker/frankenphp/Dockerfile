@@ -42,8 +42,7 @@ RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions sto
     && mkdir -p /var/log/supervisor
 
 # Install Composer dependencies (will be overridden by volume mount)
-COPY composer.json composer.lock* ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts || true
+# Note: composer install will be done via make setup-laravel
 
 # Expose port
 EXPOSE 8000

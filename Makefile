@@ -20,7 +20,7 @@ help:
 # Build all containers
 build:
 	@echo "Building all containers..."
-	docker-compose build --no-cache
+	docker-compose build
 
 # Start all services
 up:
@@ -82,16 +82,14 @@ test-health:
 
 # Run individual benchmarks
 benchmark:
-	@echo "Running individual benchmarks..."
-	docker-compose run --rm wrk wrk -t12 -c400 -d30s --latency http://swoole:8000/api/health
-	docker-compose run --rm wrk wrk -t12 -c400 -d30s --latency http://php-fpm/api/health
-	docker-compose run --rm wrk wrk -t12 -c400 -d30s --latency http://frankenphp:8000/api/health
+	@echo "Running individual benchmarks with k6..."
+	docker run --rm -i --network host grafana/k6 run - < benchmark/k6-test.js
 
 # Run complete benchmark suite
 benchmark-all:
-	@echo "Running complete benchmark suite..."
+	@echo "Running complete benchmark suite with k6..."
 	@mkdir -p results
-	docker-compose run --rm wrk /benchmark/run-benchmark.sh
+	docker run --rm -i --network host grafana/k6 run - < benchmark/k6-final-complete.js
 
 # Show results
 results:
@@ -121,9 +119,9 @@ restart-runtime:
 	docker-compose restart swoole php-fpm frankenphp
 
 # Benchmark commands
-benchmark-all: ## Run comprehensive benchmark on all runtimes
-	@echo "🚀 Running comprehensive benchmarks..."
-	docker-compose --profile benchmark run --rm wrk /benchmark/scripts/benchmark-all.sh
+benchmark-complete: ## Run comprehensive benchmark on all runtimes
+	@echo "🚀 Running comprehensive benchmarks with k6..."
+	docker run --rm -i --network host grafana/k6 run - < benchmark/k6-final-complete.js
 	@echo "📊 Results saved in ./results/"
 
 benchmark-quick: ## Quick benchmark test
@@ -158,5 +156,5 @@ install: ## Install and setup complete project
 
 rebuild: ## Rebuild and restart all services
 	docker-compose down
-	docker-compose build --no-cache
+	docker-compose build
 	docker-compose up -d

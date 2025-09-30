@@ -62,10 +62,10 @@ RUN mkdir -p /var/www/html/storage/{app,framework/{cache,sessions,views},logs} \
     /var/www/html/bootstrap/cache
 
 # Copy application files
-COPY composer.json composer.lock* ./
+# Note: composer.json will be available via volume mount at runtime
 
 # Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs || true
+# RUN composer install will be done via make setup-laravel
 
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html \
@@ -89,8 +89,7 @@ RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions sto
     && chmod -R 777 storage
 
 # Install Composer dependencies (will be overridden by volume mount)
-COPY composer.json composer.lock* ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts || true
+# Note: composer install will be done via make setup-laravel
 
 # Expose port
 EXPOSE 8000

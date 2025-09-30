@@ -57,8 +57,8 @@ RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions sto
     && mkdir -p /var/log/supervisor
 
 # Copy optimized composer files and install dependencies
-COPY composer.json ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Note: composer.json will be available via volume mount at runtime
+# RUN composer install will be done via make setup-laravel
 
 # Expose port
 EXPOSE 80
