@@ -60,7 +60,7 @@ services:
       DB_USERNAME: laravel
       DB_PASSWORD: secret
       REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_PORT: 6380
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
@@ -93,7 +93,7 @@ services:
       DB_USERNAME: laravel
       DB_PASSWORD: secret
       REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_PORT: 6380
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 30s
@@ -126,7 +126,7 @@ services:
       DB_USERNAME: laravel
       DB_PASSWORD: secret
       REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_PORT: 6380
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 30s
