@@ -1,22 +1,22 @@
-.PHONY: help build up down logs clean setup-laravel setup-database fix-permissions clear-cache benchmark benchmark-all test-health test-endpoints
+.PHONY: help build up down logs clean setup-laravel setup-database fix-permissions clear-cache benchmark benchmark-all test-endpoints status health
 
 # Default target
 help:
 	@echo "Laravel PHP Runtime Benchmark - Available Commands:"
 	@echo ""
-	@echo "  setup          - Build and start all services"
+	@echo "  setup          - Complete setup: build, start and populate database"
 	@echo "  build          - Build all Docker containers"
 	@echo "  up             - Start all services"
 	@echo "  down           - Stop all services"
+	@echo "  status         - Show status of all services and containers"
+	@echo "  health         - Check health of all services"
 	@echo "  logs           - Show logs for all services"
-	@echo "  clean          - Stop services and remove volumes"
+	@echo "  clean          - Clean temporary data and reset database"
 	@echo "  setup-laravel  - Initialize Laravel in all runtimes"
-	@echo "  setup-database - Initialize and seed database"
+	@echo "  setup-database - Initialize and populate database with init.sql"
 	@echo "  fix-permissions- Fix storage permissions for all containers"
-	@echo "  test-health    - Test health endpoints for all runtimes"
 	@echo "  test-endpoints - Test all API endpoints"
-	@echo "  benchmark      - Run individual benchmarks"
-	@echo "  benchmark-all  - Run complete benchmark suite"
+	@echo "  benchmark      - Run complete benchmark suite"
 	@echo "  results        - Show latest benchmark results"
 	@echo ""
 
@@ -44,35 +44,37 @@ down:
 logs:
 	docker-compose logs -f
 
-# Clean everything
+# Clean temporary data and reset database
 clean:
-	@echo "Cleaning up..."
-	docker-compose down -v
-	docker system prune -f
+	@echo "🧹 Cleaning temporary data..."
+	@echo "Stopping services..."
+	docker-compose down
+	@echo "Cleaning Laravel caches..."
+	docker-compose run --rm swoole php artisan cache:clear || true
+	docker-compose run --rm swoole php artisan config:clear || true
+	docker-compose run --rm swoole php artisan route:clear || true
+	docker-compose run --rm swoole php artisan view:clear || true
+	@echo "Resetting database..."
+	docker-compose up -d postgres
+	sleep 5
+	docker-compose exec postgres psql -U laravel -d laravel_benchmark -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" || true
+	docker-compose down
+	@echo "✅ Cleanup complete! (Docker images preserved for faster builds)"
 
-# Complete setup
-setup: build up setup-laravel
+# Complete setup with database population
+setup: build up setup-laravel setup-database fix-permissions
+	@echo "✅ Complete setup finished!"
 
 # Setup Laravel for all runtimes
 setup-laravel:
-	@echo "Setting up Laravel..."
+	@echo "🔧 Setting up Laravel..."
 	@echo "Fixing git ownership..."
 	docker-compose exec swoole git config --global --add safe.directory /var/www/html || true
 	@echo "Installing dependencies..."
 	docker-compose exec swoole composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 	@echo "Generating application key..."
 	docker-compose exec swoole php artisan key:generate --force
-	@echo "Verifying database initialization..."
-	docker-compose exec postgres psql -U laravel -d laravel_benchmark -c "SELECT 'Database initialized successfully';" || true
-	@echo "Running database migrations..."
-	docker-compose exec swoole php artisan migrate --force || true
-	@echo "Seeding database..."
-	docker-compose exec swoole php artisan db:seed --force || true
-	@echo "Fixing permissions..."
-	@make fix-permissions
-	@echo "Clearing caches..."
-	@make clear-cache
-	@echo "Laravel setup complete!"
+	@echo "✅ Laravel setup complete!"
 
 # Fix permissions for all containers
 fix-permissions:
@@ -95,28 +97,58 @@ clear-cache:
 	docker-compose exec swoole php artisan view:clear || true
 	docker-compose exec swoole php artisan cache:clear || true
 
-# Database setup and initialization
+# Database setup and population with init.sql
 setup-database:
 	@echo "🗄️  Setting up database..."
 	@echo "Verifying database connection..."
 	docker-compose exec postgres psql -U laravel -d laravel_benchmark -c "SELECT version();" || true
-	@echo "Running migrations..."
-	docker-compose exec swoole php artisan migrate:fresh --force || true
-	@echo "Seeding database..."
-	docker-compose exec swoole php artisan db:seed --force || true
-	@echo "Database setup complete!"
+	@echo "Populating database with init.sql..."
+	cat database/init.sql | docker-compose exec -T postgres psql -U laravel -d laravel_benchmark
+	@echo "✅ Database setup complete!"
 
-# Test health endpoints
-test-health:
-	@echo "Testing health endpoints..."
-	@echo "Swoole (port 8001):"
-	@curl -s http://localhost:8001/api/health || echo "Failed"
+# Check status of all services
+status:
+	@echo "📊 Service Status:"
+	@echo "===================="
 	@echo ""
-	@echo "PHP-FPM (port 8002):"
-	@curl -s http://localhost:8002/api/health || echo "Failed"
+	@echo "🐳 Docker Containers:"
+	@docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter "name=project-2" || echo "No containers running"
 	@echo ""
-	@echo "FrankenPHP (port 8003):"
-	@curl -s http://localhost:8003/api/health || echo "Failed"
+	@echo "🔍 Service Health:"
+	@echo "PostgreSQL:" && docker-compose exec postgres pg_isready -U laravel 2>/dev/null && echo "✅ Ready" || echo "❌ Not ready"
+	@echo "Redis:" && docker-compose exec redis redis-cli ping 2>/dev/null && echo "✅ Ready" || echo "❌ Not ready"
+	@echo "Swoole:" && curl -s http://localhost:8001/api/health >/dev/null 2>&1 && echo "✅ Ready" || echo "❌ Not ready"
+	@echo "PHP-FPM:" && curl -s http://localhost:8002/api/health >/dev/null 2>&1 && echo "✅ Ready" || echo "❌ Not ready"
+	@echo "FrankenPHP:" && curl -s http://localhost:8003/api/health >/dev/null 2>&1 && echo "✅ Ready" || echo "❌ Not ready"
+
+# Check health of all services
+health:
+	@echo ""
+	@echo "🏥 SERVICE HEALTH CHECK"
+	@echo "======================"
+	@echo ""
+	@echo "📊 Infrastructure Services:"
+	@echo -n "  🐘 PostgreSQL 17:    " && (docker-compose exec postgres pg_isready -U laravel >/dev/null 2>&1 && echo "✅ Ready (Connected)" || echo "❌ Not ready")
+	@echo -n "  🔴 Redis 7:          " && (docker-compose exec redis redis-cli ping >/dev/null 2>&1 && echo "✅ Ready (PONG)" || echo "❌ Not ready")
+	@echo ""
+	@echo "🚀 PHP Runtime Services:"
+	@echo -n "  ⚡ Swoole (8001):    " && (curl -s http://localhost:8001/api/health >/dev/null 2>&1 && echo "✅ Ready (HTTP 200)" || echo "❌ Not ready")
+	@echo -n "  � PHP-FPM (8002):   " && (curl -s http://localhost:8002/api/health >/dev/null 2>&1 && echo "✅ Ready (HTTP 200)" || echo "❌ Not ready")
+	@echo -n "  🦆 FrankenPHP (8003): " && (curl -s http://localhost:8003/api/health >/dev/null 2>&1 && echo "✅ Ready (HTTP 200)" || echo "❌ Not ready")
+	@echo ""
+	@echo "📋 Quick Summary:"
+	@total=0; ready=0; \
+	docker-compose exec postgres pg_isready -U laravel >/dev/null 2>&1 && ready=$$((ready + 1)); total=$$((total + 1)); \
+	docker-compose exec redis redis-cli ping >/dev/null 2>&1 && ready=$$((ready + 1)); total=$$((total + 1)); \
+	curl -s http://localhost:8001/api/health >/dev/null 2>&1 && ready=$$((ready + 1)); total=$$((total + 1)); \
+	curl -s http://localhost:8002/api/health >/dev/null 2>&1 && ready=$$((ready + 1)); total=$$((total + 1)); \
+	curl -s http://localhost:8003/api/health >/dev/null 2>&1 && ready=$$((ready + 1)); total=$$((total + 1)); \
+	echo "  Services Ready: $$ready/$$total"
+	@echo ""
+	@echo "💡 Tips:"
+	@echo "  • Use 'make status' for detailed container info"
+	@echo "  • Use 'make test-endpoints' for full endpoint testing"
+	@echo "  • Use 'make benchmark-quick' for performance check"
 	@echo ""
 
 # Run individual benchmarks
@@ -157,16 +189,6 @@ test-endpoints:
 	done
 	@echo ""
 
-# Development helpers
-dev-swoole:
-	docker-compose exec swoole php artisan octane:start --host=0.0.0.0 --port=8000
-
-dev-frankenphp:
-	docker-compose exec frankenphp php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000
-
-restart-runtime:
-	docker-compose restart swoole php-fpm frankenphp
-
 # Benchmark commands
 benchmark-complete: ## Run comprehensive benchmark on all runtimes
 	@echo "🚀 Running comprehensive benchmarks with k6..."
@@ -181,19 +203,6 @@ benchmark-quick: ## Quick benchmark test
 	@curl -s -w "Time: %{time_total}s, Status: %{http_code}\n" http://localhost:8001/ > /dev/null || echo "❌ Swoole unavailable"
 	@echo "Testing FrankenPHP..."
 	@curl -s -w "Time: %{time_total}s, Status: %{http_code}\n" http://localhost:8003/ > /dev/null || echo "❌ FrankenPHP unavailable"
-
-health-check: ## Check health of all services
-	@echo "🔍 Checking service health..."
-	@echo "PostgreSQL 16:"
-	@docker-compose exec postgres pg_isready -U laravel || echo "❌ PostgreSQL not ready"
-	@echo "Redis 7:"
-	@docker-compose exec redis redis-cli ping || echo "❌ Redis not ready"
-	@echo "PHP-FPM (8002):"
-	@curl -s http://localhost:8002/api/health || echo "❌ PHP-FPM not ready"
-	@echo "Swoole (8001):"
-	@curl -s http://localhost:8001/api/health || echo "❌ Swoole not ready"
-	@echo "FrankenPHP (8003):"
-	@curl -s http://localhost:8003/api/health || echo "❌ FrankenPHP not ready"
 
 install: ## Install and setup complete project
 	@echo "Setting up project-2..."
