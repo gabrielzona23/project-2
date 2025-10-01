@@ -1,0 +1,331 @@
+{
+    "test_metadata": {
+        "test_name": "Bateria 3 - Comprehensive Load Testing",
+        "date": "2025-10-01",
+        "duration": "5m30s",
+        "total_iterations": 20947,
+        "total_requests": 20950,
+        "error_rate": 0.0,
+        "failure_rate": 0.0,
+        "load_progression": [
+            10,
+            25,
+            50,
+            100,
+            200,
+            0
+        ]
+    },
+    "global_metrics": {
+        "throughput_rps": 57.8,
+        "avg_response_time_ms": 563.48,
+        "median_response_time_ms": 146.16,
+        "p90_ms": 1550,
+        "p95_ms": 2950,
+        "max_response_time_ms": 11680,
+        "avg_iteration_duration_ms": 963.69,
+        "data_received_mb": 9.2,
+        "data_sent_mb": 1.8
+    },
+    "runtime_performance": {
+        "swoole": {
+            "overall_performance_rank": 1,
+            "categories": {
+                "cache": {
+                    "success_rate": 0.996,
+                    "requests_under_2s": 1017,
+                    "total_requests": 1021,
+                    "performance_rating": "excellent"
+                },
+                "database": {
+                    "success_rate": 0.989,
+                    "requests_under_2s": 1071,
+                    "total_requests": 1083,
+                    "performance_rating": "excellent"
+                },
+                "static": {
+                    "success_rate": 0.999,
+                    "requests_under_2s": 1368,
+                    "total_requests": 1370,
+                    "performance_rating": "excellent"
+                },
+                "file": {
+                    "success_rate": 0.991,
+                    "requests_under_2s": 648,
+                    "total_requests": 654,
+                    "performance_rating": "excellent"
+                },
+                "cpu": {
+                    "success_rate": 0.980,
+                    "requests_under_2s": 1045,
+                    "total_requests": 1066,
+                    "performance_rating": "excellent"
+                },
+                "memory": {
+                    "success_rate": 0.980,
+                    "requests_under_2s": 347,
+                    "total_requests": 354,
+                    "performance_rating": "excellent"
+                },
+                "mixed": {
+                    "success_rate": 0.990,
+                    "requests_under_2s": 681,
+                    "total_requests": 688,
+                    "performance_rating": "excellent"
+                },
+                "concurrent": {
+                    "success_rate": 0.974,
+                    "requests_under_2s": 332,
+                    "total_requests": 341,
+                    "performance_rating": "very_good"
+                },
+                "runtime": {
+                    "success_rate": 0.994,
+                    "requests_under_2s": 341,
+                    "total_requests": 343,
+                    "performance_rating": "excellent"
+                }
+            },
+            "degradation_under_load": "minimal_1_3_percent"
+        },
+        "php_fpm": {
+            "overall_performance_rank": 2,
+            "categories": {
+                "cache": {
+                    "success_rate": 0.976,
+                    "requests_under_2s": 1024,
+                    "total_requests": 1049,
+                    "performance_rating": "very_good"
+                },
+                "database": {
+                    "success_rate": 0.962,
+                    "requests_under_2s": 987,
+                    "total_requests": 1026,
+                    "performance_rating": "good"
+                },
+                "static": {
+                    "success_rate": 0.985,
+                    "requests_under_2s": 1422,
+                    "total_requests": 1444,
+                    "performance_rating": "very_good"
+                },
+                "file": {
+                    "success_rate": 0.978,
+                    "requests_under_2s": 663,
+                    "total_requests": 678,
+                    "performance_rating": "very_good"
+                },
+                "cpu": {
+                    "success_rate": 0.971,
+                    "requests_under_2s": 1046,
+                    "total_requests": 1077,
+                    "performance_rating": "very_good"
+                },
+                "memory": {
+                    "success_rate": 0.922,
+                    "requests_under_2s": 317,
+                    "total_requests": 344,
+                    "performance_rating": "good"
+                },
+                "mixed": {
+                    "success_rate": 0.969,
+                    "requests_under_2s": 623,
+                    "total_requests": 643,
+                    "performance_rating": "very_good"
+                },
+                "concurrent": {
+                    "success_rate": 0.956,
+                    "requests_under_2s": 327,
+                    "total_requests": 342,
+                    "performance_rating": "good"
+                },
+                "runtime": {
+                    "success_rate": 0.988,
+                    "requests_under_2s": 329,
+                    "total_requests": 333,
+                    "performance_rating": "very_good"
+                }
+            },
+            "degradation_under_load": "moderate_2_8_percent"
+        },
+        "frankenphp": {
+            "overall_performance_rank": 3,
+            "categories": {
+                "cache": {
+                    "success_rate": 0.841,
+                    "requests_under_2s": 876,
+                    "total_requests": 1041,
+                    "performance_rating": "fair"
+                },
+                "database": {
+                    "success_rate": 0.835,
+                    "requests_under_2s": 872,
+                    "total_requests": 1044,
+                    "performance_rating": "fair"
+                },
+                "static": {
+                    "success_rate": 0.828,
+                    "requests_under_2s": 1183,
+                    "total_requests": 1429,
+                    "performance_rating": "fair"
+                },
+                "file": {
+                    "success_rate": 0.851,
+                    "requests_under_2s": 633,
+                    "total_requests": 744,
+                    "performance_rating": "fair"
+                },
+                "cpu": {
+                    "success_rate": 0.832,
+                    "requests_under_2s": 864,
+                    "total_requests": 1039,
+                    "performance_rating": "fair"
+                },
+                "memory": {
+                    "success_rate": 0.822,
+                    "requests_under_2s": 315,
+                    "total_requests": 383,
+                    "performance_rating": "fair"
+                },
+                "mixed": {
+                    "success_rate": 0.859,
+                    "requests_under_2s": 589,
+                    "total_requests": 686,
+                    "performance_rating": "fair"
+                },
+                "concurrent": {
+                    "success_rate": 0.784,
+                    "requests_under_2s": 276,
+                    "total_requests": 352,
+                    "performance_rating": "poor"
+                },
+                "runtime": {
+                    "success_rate": 0.842,
+                    "requests_under_2s": 314,
+                    "total_requests": 373,
+                    "performance_rating": "fair"
+                }
+            },
+            "degradation_under_load": "significant_15_22_percent"
+        }
+    },
+    "category_analysis": {
+        "best_performing_categories": [
+            {
+                "rank": 1,
+                "category": "static",
+                "description": "Menor latência em todos os runtimes"
+            },
+            {
+                "rank": 2,
+                "category": "cache",
+                "description": "Segunda melhor performance"
+            },
+            {
+                "rank": 3,
+                "category": "file",
+                "description": "Performance estável"
+            },
+            {
+                "rank": 4,
+                "category": "database",
+                "description": "Boa performance com otimizações"
+            },
+            {
+                "rank": 5,
+                "category": "cpu",
+                "description": "Performance adequada"
+            },
+            {
+                "rank": 6,
+                "category": "mixed",
+                "description": "Versatilidade balanceada"
+            },
+            {
+                "rank": 7,
+                "category": "memory",
+                "description": "Maior sensibilidade à carga"
+            },
+            {
+                "rank": 8,
+                "category": "runtime",
+                "description": "Performance variável"
+            },
+            {
+                "rank": 9,
+                "category": "concurrent",
+                "description": "Maior impacto sob alta carga"
+            }
+        ]
+    },
+    "academic_insights": {
+        "architecture_impact": {
+            "swoole": "Arquitetura async/event-loop demonstra superioridade consistente",
+            "php_fpm": "Process-based architecture mantém estabilidade",
+            "frankenphp": "Worker-based approach mostra sensibilidade à concorrência"
+        },
+        "scalability_patterns": {
+            "swoole": "Linear scaling até 100 VUs",
+            "php_fpm": "Plateau effect após 150 VUs",
+            "frankenphp": "Performance degradation iniciando em 100 VUs"
+        },
+        "resource_efficiency": {
+            "swoole": "Melhor utilização de recursos em todos os cenários",
+            "php_fpm": "Utilização previsível e estável",
+            "frankenphp": "Overhead significativo sob alta concorrência"
+        },
+        "workload_sensitivity": {
+            "io_intensive": "Operações I/O (file, database) favorecem Swoole",
+            "cpu_intensive": "Operações CPU mostram menor diferencial entre runtimes",
+            "memory_operations": "Evidenciam diferenças arquiteturais",
+            "concurrent_operations": "Amplificam diferenças de performance"
+        }
+    },
+    "recommendations": {
+        "high_throughput": {
+            "recommended": "swoole",
+            "reason": "Melhor escolha para performance máxima"
+        },
+        "enterprise_stable": {
+            "recommended": "php_fpm",
+            "reason": "Balanceamento ideal entre performance e estabilidade"
+        },
+        "development_prototyping": {
+            "recommended": "frankenphp",
+            "caution": "Considerar limitações de concorrência"
+        }
+    },
+    "threshold_compliance": {
+        "error_rate_under_0_1_percent": {
+            "status": "PASSED",
+            "actual": 0.0,
+            "threshold": 0.1
+        },
+        "p95_under_1000ms": {
+            "status": "FAILED",
+            "actual": 2950,
+            "threshold": 1000
+        },
+        "failure_rate_under_0_05_percent": {
+            "status": "PASSED",
+            "actual": 0.0,
+            "threshold": 0.05
+        }
+    },
+    "data_distribution": {
+        "requests_per_runtime": {
+            "swoole": {
+                "approximate_requests": 7000,
+                "percentage": 33.4
+            },
+            "php_fpm": {
+                "approximate_requests": 7000,
+                "percentage": 33.4
+            },
+            "frankenphp": {
+                "approximate_requests": 6947,
+                "percentage": 33.2
+            }
+        }
+    }
+}

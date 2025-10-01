@@ -1,0 +1,18 @@
+=== System State Before Test ===
+Wed Oct  1 06:18:37 -05 2025
+
+=== CPU Info ===
+12
+
+=== Memory Info ===
+               total        used        free      shared  buff/cache   available
+Mem:            19Gi       9.1Gi       6.7Gi       151Mi       4.0Gi        10Gi
+Swap:          5.0Gi          0B       5.0Gi
+
+=== Docker Stats ===
+CONTAINER              CPU %     MEM USAGE / LIMIT
+frankenphp_benchmark   1.53%     173MiB / 19.38GiB
+swoole_benchmark       1.63%     287.8MiB / 19.38GiB
+php_fpm_benchmark      0.02%     62.74MiB / 19.38GiB
+postgres_benchmark     0.00%     33.08MiB / 19.38GiB
+redis_benchmark        0.21%     6.641MiB / 19.38GiB
