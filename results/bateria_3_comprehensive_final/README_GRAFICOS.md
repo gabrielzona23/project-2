@@ -1,6 +1,7 @@
 # 📊 GRÁFICOS DA BATERIA 3 - COMPREHENSIVE LOAD TESTING
 
 ## 🎯 **VISÃO GERAL**
+
 Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultados da **Bateria 3**, que testou todos os 3 runtimes PHP (Swoole, PHP-FPM, FrankenPHP) com progressão de carga de 10 → 200 VUs durante 5.5 minutos.
 
 ---
@@ -8,6 +9,7 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
 ## 📈 **GRÁFICOS GERADOS**
 
 ### 1️⃣ **`1_runtime_comparison.png`** - Comparação Geral de Performance
+
 - **O que mostra:** Performance média geral de cada runtime
 - **Métrica:** Taxa de sucesso média (requests < 2s)
 - **Insights:**
@@ -16,6 +18,7 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
   - 🥉 **FrankenPHP: 84.1%** - Maior sensibilidade à carga
 
 ### 2️⃣ **`2_category_performance.png`** - Performance por Categoria de Operação
+
 - **O que mostra:** Comparação detalhada por tipo de operação
 - **Categorias:** Static, Cache, File, Database, CPU, Mixed, Memory, Runtime, Concurrent
 - **Insights:**
@@ -25,8 +28,10 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
   - **FrankenPHP:** Degradação uniforme (~15-20%) em todas as categorias
 
 ### 3️⃣ **`3_degradation_patterns.png`** - Degradação sob Alta Carga
+
 - **O que mostra:** Quanto cada runtime degrada sob 200 VUs concorrentes
-- **Linhas de referência:** 
+- **Linhas de referência:**
+  
   - 🟠 5% = Limite Aceitável
   - 🔴 10% = Limite Crítico
 - **Insights:**
@@ -35,6 +40,7 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
   - **FrankenPHP:** 18% degradação (crítica)
 
 ### 4️⃣ **`4_throughput_metrics.png`** - Métricas Globais de Performance
+
 - **O que mostra:** 4 métricas chave do teste completo
 - **Métricas:**
   - **Throughput:** 57.8 req/s
@@ -44,6 +50,7 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
 - **Insights:** Performance geral sólida com alguns outliers sob alta carga
 
 ### 5️⃣ **`5_summary_dashboard.png`** - Dashboard de Resumo
+
 - **O que mostra:** 4 visões em pizza para análise rápida
 - **Componentes:**
   - **Performance por Runtime:** Distribuição equilibrada de requests
@@ -53,6 +60,7 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
 - **Insights:** Teste abrangente e bem-sucedido
 
 ### 6️⃣ **`6_load_progression.png`** - Progressão de Carga
+
 - **O que mostra:** Evolução da carga e throughput ao longo do tempo
 - **Estágios:** 6 estágios progressivos (10→25→50→100→200→0 VUs)
 - **Insights:**
@@ -65,17 +73,20 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
 ## 🎓 **INSIGHTS ACADÊMICOS PRINCIPAIS**
 
 ### 🏆 **Performance Ranking:**
+
 1. **Swoole** - Arquitetura async/event-loop superior
 2. **PHP-FPM** - Process-based estável e previsível
 3. **FrankenPHP** - Worker-based com limitações de concorrência
 
 ### 📊 **Padrões Identificados:**
+
 - **I/O Operations** favorecem Swoole
 - **CPU Operations** mostram menor diferencial
 - **Concurrent Operations** amplificam diferenças arquiteturais
 - **Memory Operations** evidenciam overhead de cada runtime
 
 ### ⚡ **Escalabilidade:**
+
 - **Swoole:** Linear até 100 VUs, degradação mínima depois
 - **PHP-FPM:** Estável até 150 VUs, plateau controlado
 - **FrankenPHP:** Degradação iniciando em 100 VUs
@@ -97,12 +108,15 @@ Este conjunto de 6 gráficos apresenta uma análise visual completa dos resultad
 ## 🎯 **RECOMENDAÇÕES POR CENÁRIO**
 
 ### 🚀 **Alta Performance (Produção)**
+
 ✅ **Swoole** - Melhor throughput e menor latência
 
 ### 🏢 **Enterprise/Estabilidade**
+
 ✅ **PHP-FPM** - Balanceamento ideal performance/estabilidade
 
 ### 🔬 **Desenvolvimento/Prototipagem**
+
 ⚠️ **FrankenPHP** - Adequado para baixa/média carga
 
 ---
