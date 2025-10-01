@@ -64,16 +64,17 @@ comando aqui
 
 Texto depois do código.
 
-```
-
-
 ❌ **INCORRETO:**
 
-```markdown
+```text
 Texto antes do código.
+```
+
 ```bash
 comando aqui
 ```
+
+```text
 Texto depois do código.
 ```
 
@@ -148,9 +149,9 @@ Texto final.
 ---
 
 **Informações Adicionais:**
+
 - Data: Setembro 2025
 - Projeto: TCC
-```
 
 ## 📊 Checklist para Novos Documentos
 
@@ -198,7 +199,7 @@ Resultados:
 - Latência média: 35ms
 - Throughput: 500 req/s
 
-#### PHP-FPM
+### PHP-FPM
 
 Configuração:
 
@@ -218,9 +219,8 @@ O benchmark demonstrou que...
 
 ---
 
-**Projeto:** TCC - Análise de Runtimes PHP
+**Projeto:** TCC - Análise de Runtimes PHP  
 **Status:** Concluído
-```
 
 ### Documento de Setup
 
@@ -283,12 +283,11 @@ make fix-permissions
 
 ---
 
-**Última Atualização:** [Data]
+**Última Atualização:** [Data]  
 **Versão:** 1.0
-```
 
 ---
 
-**📋 Este guia deve ser seguido para todos os novos arquivos Markdown**
-**🔧 Use as ferramentas de verificação antes de commitar**
+**📋 Este guia deve ser seguido para todos os novos arquivos Markdown**  
+**🔧 Use as ferramentas de verificação antes de commitar**  
 **✅ Mantenha a consistência em todo o projeto**
