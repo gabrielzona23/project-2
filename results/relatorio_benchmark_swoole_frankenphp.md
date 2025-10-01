@@ -88,4 +88,4 @@
 
 ---
 
-**Relatório gerado automaticamente pelo sistema de benchmark K6**
+Relatório gerado automaticamente pelo sistema de benchmark K6

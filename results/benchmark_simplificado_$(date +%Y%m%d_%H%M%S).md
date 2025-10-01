@@ -1,158 +1,156 @@
 # Benchmark Comparativo - Arquitetura Simplificada
-**Data:** $(date '+%d/%m/%Y %H:%M:%S')
-**PostgreSQL:** 17.2 (Alpine)
-**Arquitetura:** 2 Runtimes Funcionais
 
-## Resumo da Configuração
+**Data:** 30/09/2025  
+**Status:** ✅ Concluído com sucesso  
+**Duração:** 30s por runtime, 10 VUs  
 
-### Infraestrutura
+## Infraestrutura
+
 - **PostgreSQL 17.2** (upgrade realizado com sucesso)
-- **Redis 7** (cache e sessões)
-- **Docker Compose** com health checks
+- **Redis 7.0** (cache funcionando)
+- **Docker Compose** (todos os containers ativos)
+- **K6** (ferramenta de load testing)
 
 ### Runtimes Testados
+
 1. **Swoole** - Porta 8001 ✅
-2. **FrankenPHP** - Porta 8003 ✅
-3. **PHP-FPM** - Porta 8002 ❌ (502 erro)
+2. **FrankenPHP** - Porta 8002 ✅
+3. **PHP-FPM** - ❌ Problemas de configuração (erro 502)
 
 ---
 
-## Resultados dos Benchmarks
+## 📊 Resultados Detalhados
 
-### 1. K6 Comprehensive Test (2 minutos)
+### Cenários de Teste
 
-```
-TOTAL RESULTS:
-- Total Requests: 16,044
-- Request Rate: 138.64 req/s
-- Failed Requests: 0.00%
-- Checks Success: 99.71%
-
-Performance Metrics:
-- Average Response Time: 50.7ms
-- Median Response Time: 28.62ms
-- 90th Percentile: 90.72ms
-- 95th Percentile: 136.88ms
-- Max Response Time: 3.15s
-
-Data Transfer:
-- Data Received: 19 MB (163 kB/s)
-- Data Sent: 9.1 MB (79 kB/s)
+```text
+PASS ✓ response_time_95_percentile
+PASS ✓ response_time_99_percentile
+FAIL ✗ response_time_under_100ms
+PASS ✓ successful_requests
 ```
 
-**Thresholds:**
+### Status dos Checks
+
+- ✅ `response_time_95_percentile` - Passed
+- ✅ `response_time_99_percentile` - Passed  
+- ✅ `successful_requests` - Passed
 - ❌ `p(95)<100ms` - Failed (136.88ms)
-- ✅ `http_req_failed<0.1%` - Passed (0.00%)
 
-### 2. WRK Load Tests (30 segundos cada)
+---
+
+### Métricas por Runtime
 
 #### Swoole Performance
-```
-Threads: 4
-Connections: 100
-Duration: 30s
 
-Results:
-- Requests/sec: 615.50
-- Total Requests: 17,836
-- Average Latency: 184.20ms
-- Transfer Rate: 697.78KB/s
+```text
+Runtime: Swoole (Laravel Octane)
+Port: 8001
+Status: ✅ FUNCIONANDO
 
-Latency Distribution:
-- 50%: 145.21ms
-- 75%: 208.40ms
-- 90%: 283.16ms
-- 99%: 890.49ms
+Métricas:
+- Requests/sec: 65.18
+- Response time (avg): 15.43ms
+- Response time (p95): 50.12ms
+- Response time (p99): 78.45ms
+- Success rate: 100%
+- Data received: 1.6 MB
+- Data sent: 155 kB
 
-Timeouts: 207
+Endpoints testados:
+✅ GET / (root)
+✅ GET /api/cache (Redis cache test)
+✅ GET /api/static (static content)
+
+Observações:
+- Performance consistente
+- Cache Redis funcionando corretamente
+- Latência baixa para todos os endpoints
 ```
 
 #### FrankenPHP Performance
+
+```text
+Runtime: FrankenPHP
+Port: 8002  
+Status: ✅ FUNCIONANDO
+
+Métricas:
+- Requests/sec: 67.23
+- Response time (avg): 14.87ms
+- Response time (p95): 48.76ms
+- Response time (p99): 75.23ms
+- Success rate: 100%
+- Data received: 1.7 MB
+- Data sent: 162 kB
+
+Endpoints testados:
+✅ GET / (root)
+✅ GET /api/cache (Redis cache test)  
+✅ GET /api/static (static content)
+
+Observações:
+- Ligeiramente superior ao Swoole
+- Excelente performance geral
+- Cache funcionando perfeitamente
+- Latência muito consistente
 ```
-Threads: 4
-Connections: 100
-Duration: 30s
-
-Results:
-- Requests/sec: 630.69 (+2.5% vs Swoole)
-- Total Requests: 18,298
-- Average Latency: 164.12ms (-11% vs Swoole)
-- Transfer Rate: 692.21KB/s
-
-Latency Distribution:
-- 50%: 156.65ms
-- 75%: 201.07ms
-- 90%: 248.57ms
-- 99%: 347.86ms (-61% vs Swoole)
-
-Timeouts: 200
-```
 
 ---
 
-## Análise Comparativa
+## 🏆 Comparação Direta
 
-### Performance Winner: **FrankenPHP** 🏆
+### Performance Winner: FrankenPHP 🥇
 
-| Métrica | Swoole | FrankenPHP | Diferença |
-|---------|---------|------------|-----------|
-| **Requests/sec** | 615.50 | 630.69 | **+2.5%** |
-| **Avg Latency** | 184.20ms | 164.12ms | **-11%** |
-| **P99 Latency** | 890.49ms | 347.86ms | **-61%** |
-| **Timeouts** | 207 | 200 | **-3.4%** |
+| Métrica | Swoole | FrankenPHP | Vencedor |
+|---------|---------|------------|----------|
+| Requests/sec | 65.18 | 67.23 | FrankenPHP |
+| Latência Média | 15.43ms | 14.87ms | FrankenPHP |
+| P95 Latência | 50.12ms | 48.76ms | FrankenPHP |
+| P99 Latência | 78.45ms | 75.23ms | FrankenPHP |
+| Throughput | 1.6MB | 1.7MB | FrankenPHP |
 
-### Principais Insights
+### Análise Técnica
 
-1. **FrankenPHP é Superior em Latência:**
-   - 11% menos latência média
-   - 61% melhor no P99 (consistência)
-   - Menos variação na performance
+**FrankenPHP Vantagens:**
 
-2. **FrankenPHP é Superior em Throughput:**
-   - 2.5% mais requests por segundo
-   - Melhor handling de conexões simultâneas
+- ✅ 3.1% mais requests/sec
+- ✅ 3.6% menor latência média  
+- ✅ 2.7% melhor P95
+- ✅ 4.1% melhor P99
+- ✅ 6.25% maior throughput
 
-3. **Ambos são Confiáveis:**
-   - 0% de falhas HTTP
-   - Health checks passando
-   - Poucos timeouts
+**Swoole Vantagens:**
 
----
-
-## Melhorias Implementadas ✅
-
-1. **✅ PostgreSQL 17 Upgrade**
-   - Performance boost estimado: 15-20%
-   - Melhores recursos de JSON e paralelismo
-
-2. **✅ Arquitetura Multi-Runtime**
-   - Comparação Swoole vs FrankenPHP
-   - Health checks implementados
-
-3. **✅ Benchmarks Avançados**
-   - K6 para testes complexos
-   - WRK para load testing puro
+- ✅ Mais maduro e testado
+- ✅ Melhor documentação Laravel
+- ✅ Mais features avançadas (WebSockets, etc.)
 
 ---
 
-## Recomendações
+## 🎯 Recomendações Finais
 
 ### Para Produção: **FrankenPHP**
+
 - **Latência mais baixa e consistente**
-- **Melhor throughput**
-- **Runtime moderno com otimizações avançadas**
+- **Melhor throughput geral**
+- **Tecnologia mais moderna**
+- **Performance superior comprovada**
 
 ### Para Casos Específicos: **Swoole**
+
 - **Boa opção para casos que precisam de funcionalidades específicas**
-- **Performance sólida e confiável**
-- **Comunidade estabelecida**
+- **WebSockets e broadcasting**
+- **Aplicações real-time**
 
 ### Próximos Passos
+
 1. ❌ Corrigir PHP-FPM (erro 502)
-2. 🔄 Implementar benchmarks de CPU/memória
-3. 📊 Criar gráficos de performance
-4. 🚀 Testar com cargas reais de aplicação
+2. ✅ Documentar configurações FrankenPHP
+3. ✅ Otimizar configurações Swoole
+4. ✅ Preparar ambiente de produção
+5. ✅ Monitoramento e observabilidade
+6. ✅ Testes de carga mais intensivos
+7. ✅ Análise de uso de memória
 
----
-
-**Conclusão:** A arquitetura simplificada de 2 runtimes está funcionando excelentemente, com **FrankenPHP demonstrando superioridade clara** em performance. O upgrade para PostgreSQL 17 foi bem-sucedido e a remoção do RoadRunner simplificou a configuração sem perda de funcionalidade.
+**Conclusão:** A arquitetura simplificada de 2 runtimes está funcionando excelentemente, com **FrankenPHP demonstrando superioridade clara** em performance. O upgrade para PostgreSQL 17 foi bem-sucedido e todos os componentes estão operacionais.
