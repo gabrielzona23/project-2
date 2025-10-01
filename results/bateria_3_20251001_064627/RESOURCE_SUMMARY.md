@@ -1,4 +1,5 @@
 # Relatório de Recursos - Bateria 3
+
 **Timestamp:** 20251001_064627
 **Duração:** 5.5 minutos
 
