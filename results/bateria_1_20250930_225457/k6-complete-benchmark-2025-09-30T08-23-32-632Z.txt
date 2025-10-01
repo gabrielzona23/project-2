@@ -1,0 +1,22 @@
+ 📊 K6 Complete Benchmark Results
+ =====================================
+ 
+ 🔥 Load Test Summary:
+   • Total Requests: 2020
+   • Failed Requests: 60.0990099009901%
+   • Average Duration: 50.97ms
+   • 95th Percentile: 195.00ms
+   • Max Duration: 1061.52ms
+ 
+ 📈 Request Rate:
+   • Requests/sec: 69.68
+   • Data Transferred: 8.49 MB
+ 
+ ⚡ Performance Breakdown by Runtime:
+   • Swoole: See detailed JSON report
+   • PHP-FPM: See detailed JSON report
+   • FrankenPHP: See detailed JSON report
+ 
+ 🎯 Endpoints Tested: 18 different routes
+ 🏁 Test completed at: 09/30/2025, 03:23:32
+ 
