@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Cache;
 */
 
 // Root API endpoint
-Route::get('/', function () {
+Route::get('', function () {
     return response()->json([
         'message' => 'Laravel Benchmark API',
         'timestamp' => now()->toISOString(),
@@ -32,7 +32,7 @@ Route::get('/', function () {
 });
 
 // Health check endpoints
-Route::get('/health', function () {
+Route::get('health', function () {
     try {
         DB::connection()->getPdo();
         Cache::put('health_check', time(), 60);
@@ -52,10 +52,10 @@ Route::get('/health', function () {
     }
 });
 
-Route::get('/health-check', fn(Request $request) => Response::noContent())->name('health-check');
+Route::get('health-check', fn(Request $request) => Response::noContent())->name('health-check');
 
 // Simple test endpoints
-Route::get('/static', fn(Request $request) => Response::json(['status' => true]))->name('static');
+Route::get('static', fn(Request $request) => Response::json(['status' => true]))->name('static');
 
 Route::get(
     '/http-request',
@@ -63,45 +63,48 @@ Route::get(
     Response::json(json_decode($httpService->get('http://whoami/api')))
 )->name('http-request');
 
-// Database operations
-Route::get('/database', [BenchmarkController::class, 'database']);
-Route::get('/database/read', [BenchmarkController::class, 'databaseRead']);
-Route::get('/database/write', [BenchmarkController::class, 'databaseWrite']);
-Route::get('/database/complex', [BenchmarkController::class, 'databaseComplex']);
+Route::controller(BenchmarkController::class)->group(function () {
 
-// Cache operations
-Route::get('/cache', [BenchmarkController::class, 'cache']);
-Route::get('/cache/read', [BenchmarkController::class, 'cacheRead']);
-Route::get('/cache/write', [BenchmarkController::class, 'cacheWrite']);
+    // Database operations
+    Route::get('database', 'database');
+    Route::get('database/read', 'databaseRead');
+    Route::get('database/write', 'databaseWrite');
+    Route::get('database/complex', 'databaseComplex');
 
-// File operations
-Route::get('/file-read', [BenchmarkController::class, 'fileRead']);
-Route::get('/file-write', [BenchmarkController::class, 'fileWrite']);
-Route::get('/file-operations', [BenchmarkController::class, 'fileOperations']);
+    // Cache operations
+    Route::get('cache', 'cache');
+    Route::get('cache/read', 'cacheRead');
+    Route::get('cache/write', 'cacheWrite');
 
-// External API calls
-Route::get('/api-external', [BenchmarkController::class, 'externalApi']);
+    // File operations
+    Route::get('file-read', 'fileRead');
+    Route::get('file-write', 'fileWrite');
+    Route::get('file-operations', 'fileOperations');
 
-// CPU intensive operations
-Route::get('/cpu-intensive', [BenchmarkController::class, 'cpuIntensive']);
+    // External API calls
+    Route::get('api-external', 'externalApi');
 
-// Memory operations
-Route::get('/memory-test', [BenchmarkController::class, 'memoryTest']);
+    // CPU intensive operations
+    Route::get('cpu-intensive', 'cpuIntensive');
 
-// JSON operations
-Route::get('/json-encode', [BenchmarkController::class, 'jsonEncode']);
-Route::get('/json-decode', [BenchmarkController::class, 'jsonDecode']);
+    // Memory operations
+    Route::get('memory-test', 'memoryTest');
 
-// Mixed workload
-Route::get('/mixed-workload', [BenchmarkController::class, 'mixedWorkload']);
+    // JSON operations
+    Route::get('json-encode', 'jsonEncode');
+    Route::get('json-decode', 'jsonDecode');
 
-// Stress tests
-Route::get('/stress-test', [BenchmarkController::class, 'stressTest']);
+    // Mixed workload
+    Route::get('mixed-workload', 'mixedWorkload');
 
-// Runtime specific tests
-Route::get('/runtime-info', [BenchmarkController::class, 'runtimeInfo']);
+    // Stress tests
+    Route::get('stress-test', 'stressTest');
 
-// Concurrent tests (varying difficulty)
-Route::get('/concurrent/light', [BenchmarkController::class, 'concurrentLight']);
-Route::get('/concurrent/medium', [BenchmarkController::class, 'concurrentMedium']);
-Route::get('/concurrent/heavy', [BenchmarkController::class, 'concurrentHeavy']);
+    // Runtime specific tests
+    Route::get('runtime-info', 'runtimeInfo');
+
+    // Concurrent tests (varying difficulty)
+    Route::get('concurrent/light', 'concurrentLight');
+    Route::get('concurrent/medium', 'concurrentMedium');
+    Route::get('concurrent/heavy', 'concurrentHeavy');
+});
