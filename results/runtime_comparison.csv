@@ -1,0 +1,4 @@
+Runtime,Porta,Arquitetura,Requests,Tempo Médio (ms),Percentual (%)
+Swoole,8001,Assíncrona,2217,35,33.3
+PHP-FPM,8002,Tradicional,2217,39,33.3
+FrankenPHP,8003,Moderna,2218,37,33.4

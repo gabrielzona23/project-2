@@ -1,0 +1,5 @@
+name,vus,duration_min,requests
+Light Load,5,3,1663
+Medium Load,10,3,1997
+Heavy Load,20,2,1327
+Spike Test,30,1,1665

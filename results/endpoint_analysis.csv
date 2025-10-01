@@ -1,0 +1,9 @@
+path,weight,category,requests
+/api/,25,basic,2163
+/api/health,20,basic,1730
+/api/static,20,basic,1730
+/api/cpu-intensive,10,cpu,865
+/api/memory-test,8,cpu,692
+/api/json-encode,8,json,692
+/api/json-decode,8,json,692
+/api/runtime-info,1,info,86
